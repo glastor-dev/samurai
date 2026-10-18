@@ -12,6 +12,9 @@ import {
   getHybridTemplates,
   getOrgTemplates,
 } from "./templates.ts";
+import { printDoctorReport, runDoctor } from "./doctor.ts";
+import { runWizard } from "./wizard.ts";
+import type { TechStack } from "./detector.ts";
 
 const HELP = `
 ${
@@ -28,41 +31,53 @@ ${
 }
 
 ${colors.bold("USO:")}
-  deno run -A jsr:@glastor-dev/standards [COMANDO] [OPCIONES]
+  deno run -A jsr:@glastor-dev/samurai [COMANDO] [OPCIONES]
   deno run -A src/cli.ts [COMANDO] [OPCIONES]
 
-${colors.bold("COMANDOS PRINCIPALES (ENFOQUE HÍBRIDO & STANDALONE):")}
+${colors.bold("COMANDOS PRINCIPALES:")}
   ${colors.green("hybrid")}             🌟 ${
-  colors.bold(
-    "ENFOQUE HÍBRIDO (Recomendado):",
-  )
-} Solo genera los archivos locales
-                         que GitHub exige por repo (Workflows, Dependabot, CODEOWNERS,
-                         CITATION.cff, llms.txt, CONTRIBUTORS.md), heredando el resto
-                         desde el repositorio .github de la organización.
+  colors.bold("ENFOQUE HÍBRIDO (Recomendado):")
+} Genera la infraestructura local
+                         obligatoria (Workflows, Dependabot agrupado, CODEOWNERS,
+                         CITATION.cff, llms.txt, CONTRIBUTORS.md, lefthook.yml),
+                         heredando la gobernanza social de la organización .github.
   ${
   colors.green("org-init")
-}           🏛️  Genera el repositorio institucional especial ${
-  colors.bold(
-    ".github",
-  )
+}           🏛️  Genera el paquete para el repositorio especial ${
+  colors.bold(".github")
 }
-                         con la portada interactiva Mermaid, Código de Conducta global,
+                         con portada interactiva Mermaid, Código de Conducta global,
                          políticas de seguridad, soporte, formularios YAML y patrocinio.
+  ${colors.green("doctor")} / ${
+  colors.green("check")
+}      🩺 Audita el repositorio actual contra las exigencias GitHub 2026
+                         y emite un diagnóstico con calificación del 0 al 100%.
+  ${
+  colors.green("wizard")
+}             🧙 Asistente interactivo guiado en terminal para configuración rápida.
   ${
   colors.green("init")
-}               📦 MODO STANDALONE: Genera el catálogo completo (22 archivos)
+}               📦 MODO STANDALONE: Genera el catálogo completo autónomo.
   ${
   colors.green("list")
-}               📋 Muestra la lista de todos los archivos generables
+}               📋 Muestra la lista de todos los archivos generables.
   ${colors.green("diff")} / ${
   colors.green("preview")
-}     🔎 Simula la creación (dry-run) sin escribir en disco
+}     🔎 Simula la creación (dry-run) sin escribir en disco.
 
 ${colors.bold("OPCIONES:")}
   ${
   colors.yellow("-m, --mode")
 } <type>      Modo de generación: 'hybrid', 'org' o 'standalone' (default)
+  ${
+  colors.yellow("--lang")
+} <en|es>         Idioma de la documentación: 'en' (English/Global) o 'es' (Español)
+  ${
+  colors.yellow("--stack")
+} <type>        Ecosistema: 'auto' (detectar), 'deno', 'rust', 'node', 'python', 'go'
+  ${
+  colors.yellow("--no-hooks")
+}           Omite la creación de git hooks con Lefthook (commit-msg y pre-commit)
   ${colors.yellow("-f, --force")}          Sobrescribe archivos si ya existen
   ${colors.yellow("-d, --dir")} <path>     Directorio destino (por defecto: ./)
   ${
@@ -102,11 +117,14 @@ async function main() {
       "workflows-only",
       "governance-only",
       "root-only",
+      "no-hooks",
       "version",
     ],
     string: [
       "dir",
       "mode",
+      "lang",
+      "stack",
       "org",
       "repo",
       "author",
@@ -120,6 +138,8 @@ async function main() {
       f: "force",
       d: "dir",
       m: "mode",
+      l: "lang",
+      s: "stack",
       v: "version",
     },
     default: {
@@ -140,6 +160,19 @@ async function main() {
   const targetDir = flags.dir || ".";
   const rawCommand = flags._[0] ? String(flags._[0]).toLowerCase() : "";
 
+  // 1. Doctor command
+  if (rawCommand === "doctor" || rawCommand === "check") {
+    const report = await runDoctor(targetDir);
+    printDoctorReport(report);
+    Deno.exit(report.percentage >= 80 ? 0 : 1);
+  }
+
+  // 2. Wizard command
+  if (rawCommand === "wizard" || rawCommand === "interactive") {
+    await runWizard(targetDir);
+    Deno.exit(0);
+  }
+
   // Resolve generation mode
   let mode: GenerationMode = "standalone";
   if (rawCommand === "hybrid" || flags.mode === "hybrid") {
@@ -152,8 +185,16 @@ async function main() {
     mode = "standalone";
   }
 
+  const lang = (flags.lang === "es" || flags.lang === "en") ? flags.lang : "en";
+  const stack = flags.stack as (TechStack | "auto" | undefined);
+  const includeHooks = !flags["no-hooks"];
+
   if (rawCommand === "list") {
-    const ctx = await resolveContext(targetDir);
+    const ctx = await resolveContext(targetDir, {}, {
+      lang,
+      stack,
+      includeHooks,
+    });
     console.log(
       colors.bold(
         colors.cyan(
@@ -256,7 +297,7 @@ async function main() {
     console.log(
       colors.bold(
         colors.yellow(
-          "📦 MODO: Standalone (Catálogo Completo Autónomo de 22 Archivos)\n",
+          "📦 MODO: Standalone (Catálogo Completo Autónomo de Archivos)\n",
         ),
       ),
     );
@@ -275,6 +316,9 @@ async function main() {
     force: flags.force,
     dryRun: isDryRun,
     mode,
+    lang,
+    stack,
+    includeHooks,
     categories,
     customContext: {
       orgOrUser: flags.org,
@@ -305,6 +349,16 @@ async function main() {
   );
   console.log(
     `  • Licencia:      ${colors.green(result.context.license)}`,
+  );
+  console.log(
+    `  • Ecosistema:    ${
+      colors.cyan(result.context.stackDisplayName || "Universal")
+    }`,
+  );
+  console.log(
+    `  • Idioma:        ${
+      colors.cyan(result.context.lang === "es" ? "Español" : "English")
+    }`,
   );
   console.log(
     `  • Modo Activo:   ${colors.cyan(result.mode.toUpperCase())}`,
@@ -354,7 +408,7 @@ async function main() {
     if (mode === "hybrid") {
       console.log(
         colors.gray(
-          "   Enfoque Híbrido activo: Workflows, Dependabot agrupado, CODEOWNERS y CITATION.cff locales.",
+          "   Enfoque Híbrido activo: Workflows, Dependabot agrupado, CODEOWNERS, CITATION.cff y Lefthook.",
         ),
       );
     } else if (mode === "org") {

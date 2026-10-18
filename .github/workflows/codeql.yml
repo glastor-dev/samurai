@@ -2,9 +2,9 @@ name: CodeQL SAST Analysis
 
 on:
   push:
-    branches: [main, master, main]
+    branches: [master, main]
   pull_request:
-    branches: [main, master, main]
+    branches: [master, main]
   schedule:
     - cron: "0 3 * * 1"
 

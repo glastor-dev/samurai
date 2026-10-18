@@ -7,4 +7,8 @@
  */
 
 export * from "./templates.ts";
+export * from "./templates_en.ts";
+export * from "./detector.ts";
+export * from "./doctor.ts";
+export * from "./wizard.ts";
 export * from "./generator.ts";

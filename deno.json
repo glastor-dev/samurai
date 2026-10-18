@@ -12,6 +12,8 @@
     "init": "deno run -A src/cli.ts init",
     "hybrid": "deno run -A src/cli.ts hybrid",
     "org-init": "deno run -A src/cli.ts org-init",
+    "doctor": "deno run -A src/cli.ts doctor",
+    "wizard": "deno run -A src/cli.ts wizard",
     "test": "deno test -A tests/",
     "check": "deno check src/mod.ts src/cli.ts",
     "fmt": "deno fmt",

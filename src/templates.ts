@@ -1,7 +1,14 @@
-/**
- * Embedded templates for Enterprise GitHub Standards & Community Health (2026 specification)
- * Based on https://github.com/glastor-dev/glastor-dev architecture.
- */
+import {
+  CONTRIBUTORS_MD_EN,
+  GITHUB_CODE_OF_CONDUCT_EN,
+  GITHUB_COMMIT_CONVENTION_EN,
+  GITHUB_CONTRIBUTING_EN,
+  GITHUB_PULL_REQUEST_TEMPLATE_EN,
+  GITHUB_SUPPORT_EN,
+  LEFTHOOK_YML,
+  ROOT_SECURITY_MD_EN,
+} from "./templates_en.ts";
+import type { TechStack } from "./detector.ts";
 
 export interface TemplateContext {
   projectName: string;
@@ -16,6 +23,16 @@ export interface TemplateContext {
   license: string;
   sponsorUser: string;
   sponsorUrl: string;
+  lang?: "en" | "es";
+  stack?: TechStack;
+  stackDisplayName?: string;
+  testCommand?: string;
+  fmtCommand?: string;
+  lintCommand?: string;
+  dependabotEcosystems?: string[];
+  setupActionSnippet?: string;
+  codeqlLanguages?: string[];
+  includeHooks?: boolean;
 }
 
 export interface GeneratedFile {
@@ -26,6 +43,28 @@ export interface GeneratedFile {
 }
 
 export function renderTemplate(template: string, ctx: TemplateContext): string {
+  const defaultSetup = `      - name: Setup Deno Environment
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Format & Lint Verification
+        run: |
+          deno fmt --check
+          deno lint
+
+      - name: Run Test Suite
+        run: |
+          deno test -A`;
+
+  const codeqlLangs = (ctx.codeqlLanguages && ctx.codeqlLanguages.length > 0)
+    ? ctx.codeqlLanguages.join(", ")
+    : "javascript-typescript";
+
+  const defaultBranch = ctx.defaultBranch || "master";
+  const branchList = Array.from(new Set([defaultBranch, "master", "main"]))
+    .join(", ");
+
   return template
     .replaceAll("{{PROJECT_NAME}}", ctx.projectName)
     .replaceAll("{{REPO_NAME}}", ctx.repoName)
@@ -34,11 +73,20 @@ export function renderTemplate(template: string, ctx: TemplateContext): string {
     .replaceAll("{{AUTHOR_EMAIL}}", ctx.authorEmail)
     .replaceAll("{{YEAR}}", ctx.year)
     .replaceAll("{{DEFAULT_BRANCH}}", ctx.defaultBranch)
+    .replaceAll("{{WORKFLOW_BRANCHES}}", branchList)
     .replaceAll("{{REPO_URL}}", ctx.repoUrl)
     .replaceAll("{{DESCRIPTION}}", ctx.description)
     .replaceAll("{{LICENSE}}", ctx.license)
     .replaceAll("{{SPONSOR_USER}}", ctx.sponsorUser)
-    .replaceAll("{{SPONSOR_URL}}", ctx.sponsorUrl);
+    .replaceAll("{{SPONSOR_URL}}", ctx.sponsorUrl)
+    .replaceAll("{{TEST_COMMAND}}", ctx.testCommand || "deno test -A")
+    .replaceAll("{{FMT_COMMAND}}", ctx.fmtCommand || "deno fmt --check")
+    .replaceAll("{{LINT_COMMAND}}", ctx.lintCommand || "deno lint")
+    .replaceAll(
+      "{{SETUP_ACTION_SNIPPET}}",
+      ctx.setupActionSnippet || defaultSetup,
+    )
+    .replaceAll("{{CODEQL_LANGUAGES}}", codeqlLangs);
 }
 
 // ---------------------------------------------------------------------------
@@ -486,8 +534,14 @@ La seguridad de nuestro código es una prioridad absoluta. Ante el hallazgo de v
 © 2010-{{YEAR}} {{AUTHOR_NAME}} - Todos los derechos reservados.
 `;
 
-export const GITHUB_DEPENDABOT =
-  `# ==============================================================================
+export function buildDependabotYml(ctx: TemplateContext): string {
+  const ecosystems =
+    ctx.dependabotEcosystems && ctx.dependabotEcosystems.length > 0
+      ? ctx.dependabotEcosystems
+      : ["github-actions"];
+
+  let yml =
+    `# ==============================================================================
 # Dependabot Configuration (GitHub 2026 Specification)
 # Groups updates to prevent PR spam and keeps actions & dependencies up to date.
 # ==============================================================================
@@ -512,6 +566,31 @@ updates:
         patterns:
           - "*"
 `;
+
+  for (const eco of ecosystems) {
+    if (eco === "github-actions") continue;
+    yml += `
+  # Maintain ${eco} ecosystem dependencies
+  - package-ecosystem: "${eco}"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    rebase-strategy: "auto"
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      ${eco}-dependencies:
+        patterns:
+          - "*"
+`;
+  }
+
+  return yml;
+}
 
 // ---------------------------------------------------------------------------
 // 3. .github/ISSUE_TEMPLATE Form Templates (GitHub 2026 YAML forms)
@@ -619,9 +698,9 @@ export const WORKFLOW_CI_YML = `name: CI Suite
 
 on:
   push:
-    branches: [{{DEFAULT_BRANCH}}, master, main]
+    branches: [{{WORKFLOW_BRANCHES}}]
   pull_request:
-    branches: [{{DEFAULT_BRANCH}}, master, main]
+    branches: [{{WORKFLOW_BRANCHES}}]
 
 # 2026 Security Principle: Least Privilege Permissions
 permissions: read-all
@@ -640,28 +719,16 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Deno Environment
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-
-      - name: Format & Lint Verification
-        run: |
-          deno fmt --check
-          deno lint
-
-      - name: Run Test Suite
-        run: |
-          deno test -A
+{{SETUP_ACTION_SNIPPET}}
 `;
 
 export const WORKFLOW_SECURITY_AUDIT_YML = `name: DevSecOps & Security Audit
 
 on:
   push:
-    branches: [{{DEFAULT_BRANCH}}, master, main]
+    branches: [{{WORKFLOW_BRANCHES}}]
   pull_request:
-    branches: [{{DEFAULT_BRANCH}}, master, main]
+    branches: [{{WORKFLOW_BRANCHES}}]
   schedule:
     - cron: '0 2 * * 1'
 
@@ -704,9 +771,9 @@ export const WORKFLOW_CODEQL_YML = `name: CodeQL SAST Analysis
 
 on:
   push:
-    branches: [{{DEFAULT_BRANCH}}, master, main]
+    branches: [{{WORKFLOW_BRANCHES}}]
   pull_request:
-    branches: [{{DEFAULT_BRANCH}}, master, main]
+    branches: [{{WORKFLOW_BRANCHES}}]
   schedule:
     - cron: '0 3 * * 1'
 
@@ -732,12 +799,12 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: javascript-typescript
+          languages: {{CODEQL_LANGUAGES}}
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:javascript-typescript"
+          category: "/language:{{CODEQL_LANGUAGES}}"
 `;
 
 export const WORKFLOW_SCORECARD_YML = `name: OpenSSF Scorecard
@@ -747,9 +814,13 @@ on:
   schedule:
     - cron: '30 1 * * 6'
   push:
-    branches: [{{DEFAULT_BRANCH}}, master, main]
+    branches: [{{WORKFLOW_BRANCHES}}]
 
 permissions: read-all
+
+concurrency:
+  group: scorecard-\${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analysis:
@@ -890,21 +961,28 @@ Este repositorio (\`{{ORG_OR_USER}}/.github\`) define la política de gobernanza
  * Returns all generated files for a given context
  */
 export function getAllTemplates(ctx: TemplateContext): GeneratedFile[] {
-  return [
+  const isEn = ctx.lang === "en";
+
+  const files: GeneratedFile[] = [
     // 1. Root files
     {
       relativePath: "SECURITY.md",
-      content: renderTemplate(ROOT_SECURITY_MD, ctx),
+      content: renderTemplate(
+        isEn ? ROOT_SECURITY_MD_EN : ROOT_SECURITY_MD,
+        ctx,
+      ),
       category: "root",
-      description:
-        "Root Security Policy with private vulnerability reporting SLA & CVSS standards",
+      description: isEn
+        ? "Root Security Policy with private vulnerability reporting SLA & CVSS standards"
+        : "Política de Seguridad con Private Vulnerability Reporting (PVR), SLAs y CVSS v4",
     },
     {
       relativePath: "CONTRIBUTORS.md",
-      content: renderTemplate(CONTRIBUTORS_MD, ctx),
+      content: renderTemplate(isEn ? CONTRIBUTORS_MD_EN : CONTRIBUTORS_MD, ctx),
       category: "root",
-      description:
-        "Leadership, governance, DX-first framework & financial sustainability roadmap",
+      description: isEn
+        ? "Leadership, governance, DX-first framework & financial sustainability roadmap"
+        : "Gobernanza, liderazgo, modelo DX y hoja de ruta de sostenibilidad financiera",
     },
     {
       relativePath: "CITATION.cff",
@@ -936,21 +1014,30 @@ export function getAllTemplates(ctx: TemplateContext): GeneratedFile[] {
     },
     {
       relativePath: ".github/CODE_OF_CONDUCT.md",
-      content: renderTemplate(GITHUB_CODE_OF_CONDUCT, ctx),
+      content: renderTemplate(
+        isEn ? GITHUB_CODE_OF_CONDUCT_EN : GITHUB_CODE_OF_CONDUCT,
+        ctx,
+      ),
       category: "governance",
       description:
         "Contributor Covenant v2.1 with AI code integrity & transparency clauses",
     },
     {
       relativePath: ".github/COMMIT_CONVENTION.md",
-      content: renderTemplate(GITHUB_COMMIT_CONVENTION, ctx),
+      content: renderTemplate(
+        isEn ? GITHUB_COMMIT_CONVENTION_EN : GITHUB_COMMIT_CONVENTION,
+        ctx,
+      ),
       category: "governance",
       description:
         "Conventional Commits 1.0 specification with SemVer rules and regex validation",
     },
     {
       relativePath: ".github/CONTRIBUTING.md",
-      content: renderTemplate(GITHUB_CONTRIBUTING, ctx),
+      content: renderTemplate(
+        isEn ? GITHUB_CONTRIBUTING_EN : GITHUB_CONTRIBUTING,
+        ctx,
+      ),
       category: "governance",
       description:
         "DX-first contribution workflow, clean code standards and PR checklist",
@@ -963,26 +1050,32 @@ export function getAllTemplates(ctx: TemplateContext): GeneratedFile[] {
     },
     {
       relativePath: ".github/PULL_REQUEST_TEMPLATE.md",
-      content: renderTemplate(GITHUB_PULL_REQUEST_TEMPLATE, ctx),
+      content: renderTemplate(
+        isEn ? GITHUB_PULL_REQUEST_TEMPLATE_EN : GITHUB_PULL_REQUEST_TEMPLATE,
+        ctx,
+      ),
       category: "governance",
       description:
         "Structured PR submission form with DevSecOps checklist & breaking changes",
     },
     {
       relativePath: ".github/SECURITY.md",
-      content: renderTemplate(ROOT_SECURITY_MD, ctx),
+      content: renderTemplate(
+        isEn ? ROOT_SECURITY_MD_EN : ROOT_SECURITY_MD,
+        ctx,
+      ),
       category: "governance",
       description: "Governance security mirror for .github discovery",
     },
     {
       relativePath: ".github/SUPPORT.md",
-      content: renderTemplate(GITHUB_SUPPORT, ctx),
+      content: renderTemplate(isEn ? GITHUB_SUPPORT_EN : GITHUB_SUPPORT, ctx),
       category: "governance",
       description: "Community support guidelines, Discussions triage and SLAs",
     },
     {
       relativePath: ".github/dependabot.yml",
-      content: renderTemplate(GITHUB_DEPENDABOT, ctx),
+      content: buildDependabotYml(ctx),
       category: "governance",
       description: "Dependabot v2 configuration with grouped weekly updates",
     },
@@ -1019,7 +1112,7 @@ export function getAllTemplates(ctx: TemplateContext): GeneratedFile[] {
       relativePath: ".github/workflows/security-audit.yml",
       content: renderTemplate(WORKFLOW_SECURITY_AUDIT_YML, ctx),
       category: "workflows",
-      description: "Secret scanning with TruffleHog OSS DevSecOps",
+      description: "Nemesis DevSecOps continuous audit and secret scanning",
     },
     {
       relativePath: ".github/workflows/codeql.yml",
@@ -1040,11 +1133,23 @@ export function getAllTemplates(ctx: TemplateContext): GeneratedFile[] {
       description: "Automated safe merging for minor/patch Dependabot PRs",
     },
   ];
+
+  if (ctx.includeHooks !== false) {
+    files.push({
+      relativePath: "lefthook.yml",
+      content: renderTemplate(LEFTHOOK_YML, ctx),
+      category: "root",
+      description:
+        "Lefthook Git Hooks configuration enforcing Conventional Commits and formatting",
+    });
+  }
+
+  return files;
 }
 
 /**
  * Returns only repository-specific files that CANNOT be inherited from .github org repo
- * (Workflows, Dependabot, CODEOWNERS, CITATION, llms.txt, CONTRIBUTORS)
+ * (Workflows, Dependabot, CODEOWNERS, CITATION, llms.txt, CONTRIBUTORS, Lefthook)
  */
 export function getHybridTemplates(ctx: TemplateContext): GeneratedFile[] {
   const all = getAllTemplates(ctx);
@@ -1053,6 +1158,7 @@ export function getHybridTemplates(ctx: TemplateContext): GeneratedFile[] {
     "CITATION.md",
     "CONTRIBUTORS.md",
     "llms.txt",
+    "lefthook.yml",
     ".github/CODEOWNERS",
     ".github/dependabot.yml",
     ".github/workflows/ci.yml",
@@ -1070,6 +1176,8 @@ export function getHybridTemplates(ctx: TemplateContext): GeneratedFile[] {
  * (Profile Showcase README, Global Code of Conduct, Contributing, Security, Support, Issue Templates, Funding)
  */
 export function getOrgTemplates(ctx: TemplateContext): GeneratedFile[] {
+  const isEn = ctx.lang === "en";
+
   return [
     {
       relativePath: ".github/profile/README.md",
@@ -1080,27 +1188,36 @@ export function getOrgTemplates(ctx: TemplateContext): GeneratedFile[] {
     },
     {
       relativePath: "CODE_OF_CONDUCT.md",
-      content: renderTemplate(GITHUB_CODE_OF_CONDUCT, ctx),
+      content: renderTemplate(
+        isEn ? GITHUB_CODE_OF_CONDUCT_EN : GITHUB_CODE_OF_CONDUCT,
+        ctx,
+      ),
       category: "governance",
       description:
         "Organization-wide Code of Conduct with AI code integrity clause",
     },
     {
       relativePath: "CONTRIBUTING.md",
-      content: renderTemplate(GITHUB_CONTRIBUTING, ctx),
+      content: renderTemplate(
+        isEn ? GITHUB_CONTRIBUTING_EN : GITHUB_CONTRIBUTING,
+        ctx,
+      ),
       category: "governance",
       description: "Organization-wide Contribution Guidelines",
     },
     {
       relativePath: "SECURITY.md",
-      content: renderTemplate(ROOT_SECURITY_MD, ctx),
+      content: renderTemplate(
+        isEn ? ROOT_SECURITY_MD_EN : ROOT_SECURITY_MD,
+        ctx,
+      ),
       category: "governance",
       description:
         "Organization-wide Security Policy with Private Vulnerability Reporting (PVR)",
     },
     {
       relativePath: "SUPPORT.md",
-      content: renderTemplate(GITHUB_SUPPORT, ctx),
+      content: renderTemplate(isEn ? GITHUB_SUPPORT_EN : GITHUB_SUPPORT, ctx),
       category: "governance",
       description: "Organization-wide Support and Discussions Protocol",
     },
@@ -1112,7 +1229,10 @@ export function getOrgTemplates(ctx: TemplateContext): GeneratedFile[] {
     },
     {
       relativePath: ".github/PULL_REQUEST_TEMPLATE.md",
-      content: renderTemplate(GITHUB_PULL_REQUEST_TEMPLATE, ctx),
+      content: renderTemplate(
+        isEn ? GITHUB_PULL_REQUEST_TEMPLATE_EN : GITHUB_PULL_REQUEST_TEMPLATE,
+        ctx,
+      ),
       category: "governance",
       description: "Organization-wide Pull Request Template",
     },

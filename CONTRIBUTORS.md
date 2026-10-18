@@ -1,68 +1,42 @@
-## 🤝 Gobernanza, Escalabilidad y Sostenibilidad Técnica
+## 🤝 Governance, Scalability & Technical Sustainability
 
 ![Contributors](https://img.shields.io/github/contributors/glastor-dev/samurai)
 ![Stars](https://img.shields.io/github/stars/glastor-dev/samurai)
 
-`**SAMURAI** impulsado por glastor-dev` no es solo un repositorio; es un
-ecosistema de ingeniería de alto rendimiento diseñado para escalar. Nuestra
-arquitectura se sustenta en dos pilares críticos: la excelencia del talento
-humano y un modelo de sostenibilidad técnica y financiera que garantiza la
-evolución constante del core.
+`**SAMURAI** powered by glastor-dev` is a high-performance engineering ecosystem
+built to scale. Our architecture rests on two pillars: world-class human talent
+and technical sustainability ensuring continuous core evolution.
 
-### 👥 Liderazgo y Dirección de Ingeniería
-
-El desarrollo de este sistema es coordinado por profesionales comprometidos con
-los estándares más exigentes de la industria.
+### 👥 Engineering Leadership & Direction
 
 - **Glastor** ([@glastor-dev](https://github.com/glastor-dev))
-  - _Lead Software Architect & Project Maintainer_
-  - Responsable del roadmap estratégico, la gobernanza técnica y la integridad
-    de la arquitectura.
+  - _Lead Software Architect & Maintainer_
+  - Responsible for strategic roadmap, architectural integrity, and technical
+    governance.
 
 ---
 
-### 🚀 Framework de Contribución (DX-Focused)
+### 🚀 Developer Experience (DX-First) Contribution
 
-¿Buscas elevar el estándar del software libre con nosotros? Incentivamos una
-**Developer Experience (DX)** superior. Si deseas integrar nuevas
-funcionalidades u optimizar el rendimiento, revisa nuestra
-[Guía de Contribución (.github/CONTRIBUTING.md)](.github/CONTRIBUTING.md).
-Aplicamos flujos de CI/CD rigurosos y revisiones de código basadas en
-mantenibilidad a largo plazo.
+Looking to elevate the standard of open-source software? Review our
+[Contribution Guide (.github/CONTRIBUTING.md)](.github/CONTRIBUTING.md). We
+maintain rigorous CI/CD standards and peer review focused on long-term
+maintainability.
 
 ---
 
-### 💡 Roadmap de Sostenibilidad e Inversión
+### 💡 Sustainability Roadmap & Sponsorship
 
-La innovación continua y el mantenimiento de una infraestructura robusta
-requieren recursos. Tu patrocinio no es una donación; es una inversión en la
-estabilidad de una herramienta que potencia tu stack tecnológico.
+Continuous innovation and robust infrastructure require resources. Sponsorship
+is an investment in the stability of tools powering your technology stack:
 
-- **Patrocinio Estratégico:**
-  [GitHub Sponsors](https://github.com/sponsors/glastor-dev) (Soporte
-  prioritario y visibilidad de marca).
-- **Fondo de Operaciones:**
-  [Sponsors Link](https://github.com/sponsors/glastor-dev) para contribuciones
-  directas.
-- **Validación de Mercado:** ⭐
-  [Star este repositorio](https://github.com/glastor-dev/samurai) para
-  incrementar nuestra tracción y visibilidad en el ecosistema open source.
+- **Strategic Sponsorship:**
+  [GitHub Sponsors](https://github.com/sponsors/glastor-dev) (Priority support &
+  brand visibility).
+- **Operations Fund:** [Sponsor Link](https://github.com/sponsors/glastor-dev)
+  for direct contributions.
+- **Market Validation:** ⭐
+  [Star this repository](https://github.com/glastor-dev/samurai) to increase
+  ecosystem visibility.
 
----
-
-### 🛡️ Ecosistema de Reconocimiento
-
-Agradecemos a las entidades y profesionales que validan nuestro rigor técnico:
-
-- **Security Researchers:** Por auditar proactivamente la robustez de nuestro
-  código.
-- **Early Adopters:** Por la validación en entornos de producción reales.
-- **Comunidad Global:** Por impulsar la innovación mediante estándares abiertos
-  e interoperables.
-
----
-
-**¿Listo para escalar?** Explora nuestro framework de trabajo en
-[.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
-
-© 2010-2026 Glastor - Todos los derechos reservados.
+© 2010-2026 Glastor - All rights reserved.

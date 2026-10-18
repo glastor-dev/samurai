@@ -7,6 +7,7 @@ import {
   getOrgTemplates,
   type TemplateContext,
 } from "./templates.ts";
+import { detectStack, STACK_CONFIGS, type TechStack } from "./detector.ts";
 
 export type GenerationMode = "standalone" | "hybrid" | "org";
 
@@ -15,6 +16,9 @@ export interface GeneratorOptions {
   force?: boolean;
   dryRun?: boolean;
   mode?: GenerationMode;
+  lang?: "en" | "es";
+  stack?: TechStack | "auto";
+  includeHooks?: boolean;
   categories?: Array<"root" | "governance" | "issues" | "workflows">;
   customContext?: Partial<TemplateContext>;
 }
@@ -84,9 +88,19 @@ export async function detectGitContext(
 export async function resolveContext(
   targetDir: string,
   overrides: Partial<TemplateContext> = {},
+  options: {
+    lang?: "en" | "es";
+    stack?: TechStack | "auto";
+    includeHooks?: boolean;
+  } = {},
 ): Promise<TemplateContext> {
   const detected = await detectGitContext(targetDir);
   const dirBasename = path.basename(path.resolve(targetDir)) || "my-project";
+
+  const detectedStack = await detectStack(targetDir);
+  const activeStack = (options.stack && options.stack !== "auto")
+    ? STACK_CONFIGS[options.stack] || detectedStack
+    : detectedStack;
 
   const orgOrUser = overrides.orgOrUser || detected.orgOrUser || "glastor-dev";
   const repoName = overrides.repoName || detected.repoName || dirBasename;
@@ -95,7 +109,7 @@ export async function resolveContext(
   const authorEmail = overrides.authorEmail || detected.authorEmail ||
     "glastor.info@gmail.com";
   const defaultBranch = overrides.defaultBranch || detected.defaultBranch ||
-    "main";
+    "master";
   const year = overrides.year || new Date().getFullYear().toString();
   const repoUrl = overrides.repoUrl || detected.repoUrl ||
     `https://github.com/${orgOrUser}/${repoName}`;
@@ -115,6 +129,16 @@ export async function resolveContext(
     sponsorUser: overrides.sponsorUser || orgOrUser,
     sponsorUrl: overrides.sponsorUrl ||
       `https://github.com/sponsors/${orgOrUser}`,
+    lang: options.lang || overrides.lang || "en",
+    stack: activeStack.stack,
+    stackDisplayName: activeStack.displayName,
+    testCommand: activeStack.testCmd,
+    fmtCommand: activeStack.fmtCmd,
+    lintCommand: activeStack.lintCmd,
+    dependabotEcosystems: activeStack.dependabotEcosystems,
+    codeqlLanguages: activeStack.codeqlLanguages,
+    setupActionSnippet: activeStack.setupActionSnippet,
+    includeHooks: options.includeHooks ?? overrides.includeHooks ?? true,
   };
 }
 
@@ -125,7 +149,11 @@ export async function generateStandards(
   options: GeneratorOptions = {},
 ): Promise<GenerationResult> {
   const targetDir = path.resolve(options.targetDir || ".");
-  const ctx = await resolveContext(targetDir, options.customContext);
+  const ctx = await resolveContext(targetDir, options.customContext, {
+    lang: options.lang,
+    stack: options.stack,
+    includeHooks: options.includeHooks,
+  });
   const mode: GenerationMode = options.mode || "standalone";
 
   let templates: GeneratedFile[];

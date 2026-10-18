@@ -2,9 +2,9 @@ name: CI Suite
 
 on:
   push:
-    branches: [main, master, main]
+    branches: [master, main]
   pull_request:
-    branches: [main, master, main]
+    branches: [master, main]
 
 # 2026 Security Principle: Least Privilege Permissions
 permissions: read-all

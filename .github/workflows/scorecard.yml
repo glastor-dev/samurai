@@ -5,9 +5,13 @@ on:
   schedule:
     - cron: "30 1 * * 6"
   push:
-    branches: [main, master, main]
+    branches: [master, main]
 
 permissions: read-all
+
+concurrency:
+  group: scorecard-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analysis:
