@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Preguntas y Discusiones de Arquitectura
+    url: https://github.com/glastor-dev/samurai/discussions
+    about: Realiza consultas de uso, debate sobre el roadmap o comparte tus proyectos construidos con SAMURAI.
+  - name: 🛡️ Divulgación Privada de Seguridad
+    url: https://github.com/glastor-dev/samurai/security/advisories
+    about: Reporta vulnerabilidades de forma privada y confidencial a los mantenedores.

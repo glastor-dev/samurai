@@ -1,0 +1,38 @@
+name: CI Suite
+
+on:
+  push:
+    branches: [main, master, main]
+  pull_request:
+    branches: [main, master, main]
+
+# 2026 Security Principle: Least Privilege Permissions
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Code Quality & Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Deno Environment
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Format & Lint Verification
+        run: |
+          deno fmt --check
+          deno lint
+
+      - name: Run Test Suite
+        run: |
+          deno test -A

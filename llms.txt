@@ -1,0 +1,17 @@
+# SAMURAI
+> Enterprise-grade software repository adhering to GitHub 2026 standards and DevSecOps architecture.
+
+Este archivo sigue la especificación estándar **llms.txt** para proveer contexto semántico estructurado a agentes de inteligencia artificial y modelos de lenguaje (LLMs).
+
+## Enlaces Principales de Arquitectura
+- [Repositorio Código](https://github.com/glastor-dev/samurai): Código fuente del proyecto y documentación técnica.
+- [Convención de Commits](https://github.com/glastor-dev/samurai/blob/main/.github/COMMIT_CONVENTION.md): Estándar estricto de commits basado en Conventional Commits y validación Regex.
+- [Guía de Contribución](https://github.com/glastor-dev/samurai/blob/main/.github/CONTRIBUTING.md): Guía paso a paso para desarrollo y flujos de PR.
+- [Política de Seguridad](https://github.com/glastor-dev/samurai/blob/main/SECURITY.md): Políticas de reporte y manejo confidencial de vulnerabilidades.
+- [Gobernanza y Conducta](https://github.com/glastor-dev/samurai/blob/main/.github/CODE_OF_CONDUCT.md): Reglas de interacción humana y directrices sobre código generado con IA.
+
+## Directrices para Agentes de Código e Inteligencia Artificial
+1. **Conventional Commits Requerido:** Todo cambio generado debe acompañar mensajes con formato: `<tipo>(<scope>): <asunto>` respetando el límite de 50 caracteres en el encabezado.
+2. **Transparencia en Código de IA:** Toda contribución automatizada o asistida por LLMs debe incluir una mención explícita o Co-authored-by.
+3. **Mínimo Privilegio en Workflows:** Cualquier pipeline sugerido debe declarar `permissions: read-all` a nivel raíz y definir únicamente los scopes de escritura indispensables.
+4. **SemVer Estricto:** Toda rotura de compatibilidad (Breaking Change) debe marcarse con `BREAKING CHANGE:` en el footer del commit.

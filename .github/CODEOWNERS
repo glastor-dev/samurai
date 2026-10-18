@@ -1,0 +1,24 @@
+# ==============================================================================
+# PROJECT SAMURAI - CODEOWNERS CONFIGURATION (GitHub 2026 Standard)
+# Purpose: Define ownership, accountability, mandatory review paths & compliance.
+# Reference: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# ==============================================================================
+
+# [ GLOBAL MAINTAINER ]
+# Default reviewer for all repository assets to preserve architectural integrity.
+* @glastor-dev
+
+# [ CI/CD & SUPPLY CHAIN SECURITY ]
+# Workflows, GitHub configurations, automation and dependency definitions.
+.github/ @glastor-dev
+.github/workflows/ @glastor-dev
+.github/dependabot.yml @glastor-dev
+
+# [ COMPLIANCE, GOVERNANCE & LEGAL ]
+# Legal policies, security advisories, licensing and community guides.
+LICENSE @glastor-dev
+SECURITY.md @glastor-dev
+.github/SECURITY.md @glastor-dev
+.github/CODE_OF_CONDUCT.md @glastor-dev
+.github/CONTRIBUTING.md @glastor-dev
+CITATION.cff @glastor-dev
