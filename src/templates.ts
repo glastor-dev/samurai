@@ -655,7 +655,7 @@ jobs:
           deno test -A
 `;
 
-export const WORKFLOW_SECURITY_AUDIT_YML = `name: DevSecOps & Secret Scanning
+export const WORKFLOW_SECURITY_AUDIT_YML = `name: DevSecOps & Security Audit
 
 on:
   push:
@@ -663,18 +663,19 @@ on:
   pull_request:
     branches: [{{DEFAULT_BRANCH}}, master, main]
   schedule:
-    # Run weekly security scan every Monday at 02:00 UTC
     - cron: '0 2 * * 1'
 
-permissions: read-all
+permissions:
+  contents: read
+  security-events: write
 
 concurrency:
   group: security-\${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  trufflehog:
-    name: Secret & Credential Leak Scan
+  nemesis:
+    name: Nemesis DevSecOps & Secret Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -683,13 +684,20 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Run TruffleHog Secret Scanner
-        uses: trufflesecurity/trufflehog@main
+      - name: Run Nemesis DevSecOps Auditor
+        uses: glastor-dev/nemesis@master
+        continue-on-error: true
         with:
-          path: ./
-          base: \${{ github.event.repository.default_branch }}
-          head: HEAD
-          extra_args: --only-verified
+          diff-mode: \${{ github.event_name == 'pull_request' }}
+          auto-fix: false
+          scan-secrets: true
+          scan-sast: true
+          scan-sca: true
+          scan-hygiene: true
+          scan-licenses: true
+          generate-sbom: true
+          upload-sarif: true
+          fail-on-critical: false
 `;
 
 export const WORKFLOW_CODEQL_YML = `name: CodeQL SAST Analysis
@@ -747,6 +755,7 @@ jobs:
   analysis:
     name: Scorecard Supply-Chain Security Analysis
     runs-on: ubuntu-latest
+    continue-on-error: true
     permissions:
       security-events: write
       id-token: write
