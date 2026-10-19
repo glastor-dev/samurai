@@ -27,6 +27,10 @@ jobs:
   publish:
     name: Publish Package to JSR (OIDC)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -49,8 +53,8 @@ jobs:
         run: |
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "Running simulated JSR publication..."
-            deno publish --dry-run
+            deno publish --dry-run --allow-slow-types
           else
             echo "Publishing @glastor-dev/samurai with OIDC..."
-            deno publish
+            deno publish --allow-slow-types
           fi
