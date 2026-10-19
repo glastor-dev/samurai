@@ -84,6 +84,9 @@ ${colors.bold("OPCIONES:")}
   colors.yellow("--no-hooks")
 }           Omite la creación de git hooks con Lefthook (commit-msg y pre-commit)
   ${colors.yellow("-f, --force")}          Sobrescribe archivos si ya existen
+  ${
+  colors.yellow("--force-ci")
+}          Fuerza la sobreescritura de workflows CI existentes (por defecto protegidos)
   ${colors.yellow("-d, --dir")} <path>     Directorio destino (por defecto: ./)
   ${
   colors.yellow("--diff")
@@ -130,6 +133,7 @@ async function main() {
     boolean: [
       "help",
       "force",
+      "force-ci",
       "dry-run",
       "diff",
       "backup",
@@ -209,6 +213,7 @@ async function main() {
         : undefined,
       stack: flags.stack as (TechStack | "auto" | undefined),
       includeHooks: !flags["no-hooks"],
+      forceCi: !!flags["force-ci"],
       files: flags["files"] ? String(flags["files"]).split(",") : undefined,
       customContext: {
         ...(flags.org ? { orgOrUser: String(flags.org) } : {}),
@@ -369,6 +374,7 @@ async function main() {
     lang,
     stack,
     includeHooks,
+    forceCi: !!flags["force-ci"],
     categories,
     customContext: {
       orgOrUser: flags.org,

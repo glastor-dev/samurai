@@ -18,6 +18,7 @@ export interface UpdateOptions {
   lang?: "en" | "es";
   stack?: TechStack | "auto";
   includeHooks?: boolean;
+  forceCi?: boolean;
   files?: string[];
   customContext?: Partial<TemplateContext>;
 }
@@ -305,6 +306,25 @@ export async function updateStandards(
 
     if (fileExists) {
       const currentContent = await Deno.readTextFile(fullPath);
+
+      // Protect custom user workflows from being overwritten
+      const isCustomWorkflow =
+        tpl.relativePath.startsWith(".github/workflows/") &&
+        !currentContent.includes("@glastor-dev/samurai");
+
+      if (isCustomWorkflow && !options.forceCi) {
+        report.skipped.push({
+          relativePath: tpl.relativePath,
+          resolvedPath: fullPath,
+          status: "skipped",
+          description:
+            "Workflow personalizado preexistente detectado — mantenido intacto para proteger los pipelines del proyecto",
+          additions: 0,
+          deletions: 0,
+        });
+        continue;
+      }
+
       const isIdentical =
         normalizeContent(currentContent) === normalizeContent(tpl.content);
 
@@ -467,6 +487,22 @@ export function printUpdateReport(
           colors.gray("(usa --all para agregarlo)")
         }`,
       );
+    }
+    console.log();
+  }
+
+  // 5. Preserved custom workflows
+  if (report.skipped.length > 0) {
+    console.log(
+      colors.bold(
+        colors.magenta(
+          `Workflows Preexistentes Preservados (${report.skipped.length}):`,
+        ),
+      ),
+    );
+    for (const f of report.skipped) {
+      console.log(`  🛡️  ${colors.bold(f.relativePath)}`);
+      console.log(`     ${colors.gray(f.description)}`);
     }
     console.log();
   }

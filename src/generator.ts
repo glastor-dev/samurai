@@ -20,6 +20,7 @@ export interface GeneratorOptions {
   stack?: TechStack | "auto";
   includeHooks?: boolean;
   categories?: Array<"root" | "governance" | "issues" | "workflows">;
+  forceCi?: boolean;
   customContext?: Partial<TemplateContext>;
 }
 
@@ -206,9 +207,27 @@ export async function generateStandards(
     const fullPath = path.join(targetDir, item.relativePath);
     const exists = await fs.exists(fullPath);
 
-    if (exists && !options.force) {
-      skipped.push(item.relativePath);
-      continue;
+    if (exists) {
+      // Protect custom user workflows from being overwritten
+      if (item.relativePath.startsWith(".github/workflows/")) {
+        try {
+          const existingText = await Deno.readTextFile(fullPath);
+          const isCustom = !existingText.includes("@glastor-dev/samurai");
+          if (isCustom && !options.forceCi) {
+            skipped.push(
+              `${item.relativePath} (preservado: workflow personalizado preexistente)`,
+            );
+            continue;
+          }
+        } catch {
+          // ignore
+        }
+      }
+
+      if (!options.force) {
+        skipped.push(item.relativePath);
+        continue;
+      }
     }
 
     if (!options.dryRun) {

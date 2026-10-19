@@ -251,3 +251,49 @@ Deno.test("updateStandards detects outdated files, preserves Glastor® and creat
     await Deno.remove(tempDir, { recursive: true });
   }
 });
+
+Deno.test("generateStandards and updateStandards preserve pre-existing custom workflows without breaking them", async () => {
+  const tempDir = await Deno.makeTempDir({ prefix: "preserve_ci_test_" });
+
+  try {
+    const workflowsDir = path.join(tempDir, ".github", "workflows");
+    await fs.ensureDir(workflowsDir);
+
+    // 1. Create a custom pre-existing user workflow
+    const customCiContent =
+      `name: Custom User Build & Deploy\non: [push]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo "Deploying custom container"`;
+    await Deno.writeTextFile(
+      path.join(workflowsDir, "ci.yml"),
+      customCiContent,
+    );
+
+    // 2. Run updateStandards with createMissing enabled
+    const report = await updateStandards({
+      targetDir: tempDir,
+      createMissing: true,
+      customContext: {
+        projectName: "PRESERVE-TEST",
+        repoName: "preserve-test",
+        orgOrUser: "glastor-dev",
+      },
+    });
+
+    // Custom workflow must be skipped/preserved
+    assert(
+      report.skipped.some((f) => f.relativePath === ".github/workflows/ci.yml"),
+    );
+
+    // Verify content of custom CI remains 100% untouched
+    const currentCi = await Deno.readTextFile(
+      path.join(workflowsDir, "ci.yml"),
+    );
+    assertEquals(currentCi, customCiContent);
+
+    // Supplementary DevSecOps workflows should still be created safely
+    assert(await fs.exists(path.join(workflowsDir, "security-audit.yml")));
+    assert(await fs.exists(path.join(workflowsDir, "codeql.yml")));
+    assert(await fs.exists(path.join(workflowsDir, "scorecard.yml")));
+  } finally {
+    await Deno.remove(tempDir, { recursive: true });
+  }
+});
