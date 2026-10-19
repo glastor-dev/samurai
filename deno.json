@@ -9,7 +9,10 @@
     "./server": "./src/server.ts"
   },
   "deploy": {
-    "entrypoint": "src/server.ts"
+    "entrypoint": "server.ts",
+    "runtime": {
+      "entrypoint": "server.ts"
+    }
   },
   "publish": {
     "include": [
