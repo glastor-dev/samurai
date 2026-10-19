@@ -8,6 +8,12 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Simulate publication without writing to JSR registry"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -32,10 +38,19 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Verify Types & Test Suite
+      - name: Verify Code Quality & Testing
         run: |
+          deno fmt --check
+          deno lint
           deno check src/mod.ts src/cli.ts
           deno test -A
 
       - name: Publish to JSR
-        run: deno publish
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "Running simulated JSR publication..."
+            deno publish --dry-run
+          else
+            echo "Publishing @glastor-dev/samurai with OIDC..."
+            deno publish
+          fi
