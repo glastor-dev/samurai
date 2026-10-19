@@ -13,3 +13,4 @@ export * from "./doctor.ts";
 export * from "./wizard.ts";
 export * from "./updater.ts";
 export * from "./generator.ts";
+export * from "./server.ts";

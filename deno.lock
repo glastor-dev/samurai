@@ -3,12 +3,14 @@
   "specifiers": {
     "jsr:@std/assert@^1.0.11": "1.0.19",
     "jsr:@std/cli@^1.0.9": "1.0.32",
+    "jsr:@std/fmt@^1.0.10": "1.0.10",
     "jsr:@std/fmt@^1.0.5": "1.0.10",
     "jsr:@std/fs@^1.0.8": "1.0.24",
     "jsr:@std/internal@^1.0.12": "1.0.14",
     "jsr:@std/internal@^1.0.14": "1.0.14",
     "jsr:@std/path@^1.0.8": "1.1.6",
-    "jsr:@std/path@^1.1.5": "1.1.6"
+    "jsr:@std/path@^1.1.5": "1.1.6",
+    "jsr:@zip-js/zip-js@^2.24.0": "2.24.0"
   },
   "jsr": {
     "@std/assert@1.0.19": {
@@ -18,7 +20,11 @@
       ]
     },
     "@std/cli@1.0.32": {
-      "integrity": "188b3a100d6202d64e3f5bd3d799c7fa4f6d77f92cc65eb7f641c1fa0aa92a66"
+      "integrity": "188b3a100d6202d64e3f5bd3d799c7fa4f6d77f92cc65eb7f641c1fa0aa92a66",
+      "dependencies": [
+        "jsr:@std/fmt@^1.0.10",
+        "jsr:@std/internal@^1.0.14"
+      ]
     },
     "@std/fmt@1.0.10": {
       "integrity": "90dfba288802ac6de82fb31d0917eb9e4450b9925b954d5e51fc29ac07419db5"
@@ -38,6 +44,9 @@
       "dependencies": [
         "jsr:@std/internal@^1.0.14"
       ]
+    },
+    "@zip-js/zip-js@2.24.0": {
+      "integrity": "655339ab359175210ee3d38c338b504724762b99aeb311856d82c8709429d640"
     }
   },
   "workspace": {
@@ -46,7 +55,8 @@
       "jsr:@std/cli@^1.0.9",
       "jsr:@std/fmt@^1.0.5",
       "jsr:@std/fs@^1.0.8",
-      "jsr:@std/path@^1.0.8"
+      "jsr:@std/path@^1.0.8",
+      "jsr:@zip-js/zip-js@^2.24.0"
     ]
   }
 }

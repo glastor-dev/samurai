@@ -203,6 +203,42 @@ deno task init
 
 ---
 
+## 🌐 Samurai Edge & Deno Deploy (Web App & API REST)
+
+Samurai incluye un servidor HTTP nativo para **Deno Deploy** que expone tanto
+una **interfaz web interactiva (Single-Page App)** como una **API REST** de
+latencia cero a nivel global:
+
+### 1. Iniciar localmente el Servidor Web / API
+
+```bash
+deno task serve
+# Acceder en: http://localhost:8000
+```
+
+### 2. Endpoints Disponibles en el Edge
+
+| Endpoint            |     Método     | Descripción                                                                                                   |
+| :------------------ | :------------: | :------------------------------------------------------------------------------------------------------------ |
+| `/`                 |     `GET`      | **Web UI interactiva**: Generador visual, previsualizador de archivos, selector multi-stack y descarga `.zip` |
+| `/api/generate`     |     `POST`     | Devuelve el payload JSON completo con todos los archivos renderizados                                         |
+| `/api/download-zip` | `POST` / `GET` | Genera y descarga un archivo `.zip` en memoria con compresión nativa                                          |
+| `/api/templates`    |     `GET`      | Metadatos y lista de plantillas disponibles según parámetros (`?stack=rust&lang=es`)                          |
+| `/install.sh`       |     `GET`      | Script instalador one-liner para Linux/macOS: `curl -fsSL https://samurai.deno.dev/install.sh \| sh`          |
+| `/health`           |     `GET`      | Monitoreo y estado de salud del servicio Edge                                                                 |
+
+### 3. Despliegue en Deno Deploy
+
+1. En [dash.deno.com](https://dash.deno.com), crea un nuevo proyecto (por
+   ejemplo `samurai`).
+2. Vincula el repositorio `glastor-dev/samurai` con punto de entrada
+   `src/server.ts`.
+3. O utiliza el workflow automatizado
+   [.github/workflows/deploy.yml](file:///.github/workflows/deploy.yml) que
+   autentica mediante OIDC tokenless.
+
+---
+
 ## 🛠️ Publicación en JSR
 
 ```bash
