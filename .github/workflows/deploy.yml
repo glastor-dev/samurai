@@ -39,7 +39,14 @@ jobs:
           deno test -A
 
       - name: Deploy to Deno Deploy
+        id: deploy
+        continue-on-error: true
         uses: denoland/deployctl@v1
         with:
           project: ${{ vars.DENO_DEPLOY_PROJECT || 'samurai' }}
           entrypoint: "src/server.ts"
+
+      - name: Deployment Notice
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          echo "::notice title=Deno Deploy Setup::El proyecto Deno Deploy '${{ vars.DENO_DEPLOY_PROJECT || 'samurai' }}' aún no está vinculado. Crea el proyecto en https://dash.deno.com apuntando a src/server.ts para activar el despliegue continuo."
