@@ -8,6 +8,9 @@
     "./cli": "./src/cli.ts",
     "./server": "./src/server.ts"
   },
+  "deploy": {
+    "entrypoint": "src/server.ts"
+  },
   "publish": {
     "include": [
       "src/",
