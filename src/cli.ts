@@ -14,6 +14,7 @@ import {
 } from "./templates.ts";
 import { printDoctorReport, runDoctor } from "./doctor.ts";
 import { runWizard } from "./wizard.ts";
+import { printUpdateReport, updateStandards } from "./updater.ts";
 import type { TechStack } from "./detector.ts";
 
 const HELP = `
@@ -55,6 +56,10 @@ ${colors.bold("COMANDOS PRINCIPALES:")}
   ${
   colors.green("wizard")
 }             🧙 Asistente interactivo guiado en terminal para configuración rápida.
+  ${colors.green("update")} / ${
+  colors.green("sync")
+}      🔄 Sincroniza y actualiza los archivos existentes a los estándares 2026
+                         preservando marcas (Glastor®) y resolviendo rutas duales.
   ${
   colors.green("init")
 }               📦 MODO STANDALONE: Genera el catálogo completo autónomo.
@@ -80,6 +85,18 @@ ${colors.bold("OPCIONES:")}
 }           Omite la creación de git hooks con Lefthook (commit-msg y pre-commit)
   ${colors.yellow("-f, --force")}          Sobrescribe archivos si ya existen
   ${colors.yellow("-d, --dir")} <path>     Directorio destino (por defecto: ./)
+  ${
+  colors.yellow("--diff")
+}                Muestra diferencias línea por línea de los archivos a actualizar
+  ${
+  colors.yellow("--backup")
+}              Crea un respaldo .bak antes de sobrescribir archivos existentes
+  ${
+  colors.yellow("--all")
+}                 Además de actualizar existentes, genera archivos faltantes
+  ${
+  colors.yellow("--files")
+} <f1,f2>      Filtra qué archivos específicos actualizar (ej: SECURITY.md,CODEOWNERS)
   ${
   colors.yellow("--dry-run")
 }            Modo simulación sin escribir en el sistema de archivos
@@ -114,6 +131,9 @@ async function main() {
       "help",
       "force",
       "dry-run",
+      "diff",
+      "backup",
+      "all",
       "workflows-only",
       "governance-only",
       "root-only",
@@ -125,6 +145,7 @@ async function main() {
       "mode",
       "lang",
       "stack",
+      "files",
       "org",
       "repo",
       "author",
@@ -170,6 +191,35 @@ async function main() {
   // 2. Wizard command
   if (rawCommand === "wizard" || rawCommand === "interactive") {
     await runWizard(targetDir);
+    Deno.exit(0);
+  }
+
+  // 3. Update / Sync command
+  if (
+    rawCommand === "update" || rawCommand === "sync" || rawCommand === "upgrade"
+  ) {
+    const report = await updateStandards({
+      targetDir,
+      createMissing: !!(flags["all"] || flags["create-missing"]),
+      backup: !!flags["backup"],
+      dryRun: !!(flags["dry-run"] || flags["diff"] || flags["preview"]),
+      showDiff: !!(flags["diff"] || flags["preview"]),
+      lang: (flags.lang === "es" || flags.lang === "en")
+        ? flags.lang
+        : undefined,
+      stack: flags.stack as (TechStack | "auto" | undefined),
+      includeHooks: !flags["no-hooks"],
+      files: flags["files"] ? String(flags["files"]).split(",") : undefined,
+      customContext: {
+        ...(flags.org ? { orgOrUser: String(flags.org) } : {}),
+        ...(flags.repo ? { repoName: String(flags.repo) } : {}),
+        ...(flags.author ? { authorName: String(flags.author) } : {}),
+      },
+    });
+
+    printUpdateReport(report, {
+      showDiff: !!(flags["diff"] || flags["preview"]),
+    });
     Deno.exit(0);
   }
 

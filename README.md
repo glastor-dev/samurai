@@ -72,7 +72,33 @@ deno run -A jsr:@glastor-dev/samurai doctor
 
 > Resultado en este repositorio: **100/100 (100%) - Grade A+ (Elite)**.
 
-### 3. 🧠 Detección Inteligente Multi-Stack
+### 3. 🔄 Actualización y Sincronización Inteligente (`update` / `sync`)
+
+Sincroniza y actualiza repositorios existentes que ya tienen archivos de
+gobernanza (`SECURITY.md`, `CONTRIBUTORS.md`, `.github/SUPPORT.md`,
+`.github/CODEOWNERS`, etc.) a los estándares oficiales 2026:
+
+- **Preservación de Marca**: Detecta y respeta automáticamente marcas
+  registradas como `Glastor®` y mantenedores locales.
+- **Rutas Duales Flexibles**: Encuentra y actualiza los archivos dondequiera que
+  residan (raíz o subcarpeta `.github/`) sin duplicados.
+- **Previsualización Diff y Respaldos**:
+
+```bash
+# Previsualizar diferencias línea por línea (dry-run):
+deno task update --diff
+
+# Actualizar con copia de respaldo automática (.bak):
+deno task update --backup
+
+# Actualizar existentes y además generar cualquier estándar faltante:
+deno task update --all
+
+# Actualizar solo archivos específicos:
+deno run -A jsr:@glastor-dev/samurai update --files SECURITY.md,CODEOWNERS
+```
+
+### 4. 🧠 Detección Inteligente Multi-Stack
 
 Detecta automáticamente el lenguaje de tu proyecto (**Deno, Rust,
 Node/TypeScript, Python, Go**) y adapta tanto `ci.yml` (comandos de test y lint)

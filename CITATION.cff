@@ -5,7 +5,7 @@ type: software
 version: "1.0.0"
 date-released: "2026-01-01"
 authors:
-  - family-names: "Glastor"
+  - family-names: "Glastor®"
     given-names: ""
     email: "glastor.info@gmail.com"
 repository-code: "https://github.com/glastor-dev/samurai"

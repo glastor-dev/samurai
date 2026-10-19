@@ -1,40 +1,37 @@
-## 📋 Resumen del Cambio (Executive Summary)
+## 📋 Summary of Changes
 
-<!-- Describe brevemente la motivación técnica y el impacto de este Pull Request -->
+<!-- Briefly describe the technical motivation and scope of this pull request -->
 
-Closes #<!-- Número de issue que resuelve, e.g. Closes #42 -->
-
----
-
-## 🏷️ Tipo de Modificación
-
-- [ ] 🐛 **Fix:** Corrección de error o regresión.
-- [ ] ✨ **Feat:** Nueva funcionalidad o capacidad.
-- [ ] ⚡ **Perf:** Optimización de rendimiento o consumo de recursos.
-- [ ] ♻️ **Refactor:** Reestructuración de código sin alterar comportamiento.
-- [ ] 📚 **Docs:** Actualización de documentación o diagramas.
-- [ ] 🧪 **Test:** Nuevas pruebas unitarias o de integración.
-- [ ] 🔧 **CI/Chore:** Ajustes de pipelines, dependencias o tooling.
+Closes #<!-- Issue number if applicable, e.g. Closes #42 -->
 
 ---
 
-## 🔍 Checklist de Calidad y DevSecOps
+## 🏷️ Type of Change
 
-- [ ] He seguido la convención de
+- [ ] 🐛 **Fix:** Bug fix or regression resolution.
+- [ ] ✨ **Feat:** New feature or functional enhancement.
+- [ ] ⚡ **Perf:** Performance or memory optimization.
+- [ ] ♻️ **Refactor:** Code restructuring without behavioral change.
+- [ ] 📚 **Docs:** Documentation or specification update.
+- [ ] 🧪 **Test:** Added or improved automated tests.
+- [ ] 🔧 **CI/Chore:** Pipeline, tooling, or dependency updates.
+
+---
+
+## 🔍 Quality & DevSecOps Checklist
+
+- [ ] Commit messages follow
       [Conventional Commits](.github/COMMIT_CONVENTION.md).
-- [ ] Mi código cumple con las guías de estilo (`fmt` y `lint`).
-- [ ] He añadido o actualizado pruebas automatizadas para validar los cambios.
-- [ ] He verificado que todas las pruebas existentes continúan pasando
-      exitosamente.
-- [ ] He documentado adecuadamente las nuevas interfaces o variables
-      introducidas.
-- [ ] **Breaking Changes:** Si introduce un cambio incompatible, he marcado
-      `BREAKING CHANGE:` en el commit y he explicado el plan de migración abajo.
-- [ ] **Transparencia en IA:** Si el código fue asistido por LLMs, he validado
-      su autoría, corrección y cumplimiento de licencias.
+- [ ] Code passes style formatting and lint checks.
+- [ ] Added or updated automated tests covering new behavior.
+- [ ] All existing automated tests continue to pass.
+- [ ] **Breaking Changes:** If introducing breaking changes, documented in
+      footer and explained below.
+- [ ] **AI Transparency:** If code was assisted by LLMs, verified correctness,
+      originality, and license compliance.
 
 ---
 
-## 💥 Breaking Changes & Notas de Despliegue
+## 💥 Breaking Changes & Migration Notes
 
-<!-- Si aplica, detalla los pasos de migración requeridos. De lo contrario, indica "N/A" -->
+<!-- If applicable, detail required migration steps. Otherwise write "N/A" -->

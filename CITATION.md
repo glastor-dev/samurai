@@ -14,7 +14,7 @@ lateral derecha a partir del archivo [CITATION.cff](CITATION.cff).
 
 ```bibtex
 @software{samurai_2026,
-  author = {Glastor},
+  author = {Glastor®},
   title = {SAMURAI: Enterprise-grade software repository adhering to GitHub 2026 standards and DevSecOps architecture.},
   year = {2026},
   url = {https://github.com/glastor-dev/samurai},
@@ -24,10 +24,10 @@ lateral derecha a partir del archivo [CITATION.cff](CITATION.cff).
 
 ## Formato APA (7ª edición)
 
-> Glastor. (2026). _SAMURAI_ (Versión 1.0.0) [Software de computación].
+> Glastor®. (2026). _SAMURAI_ (Versión 1.0.0) [Software de computación].
 > https://github.com/glastor-dev/samurai
 
 ## Formato IEEE
 
-> Glastor, "SAMURAI," 2026. [En línea]. Disponible en:
+> Glastor®, "SAMURAI," 2026. [En línea]. Disponible en:
 > https://github.com/glastor-dev/samurai.

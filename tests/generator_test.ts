@@ -11,6 +11,7 @@ import {
 } from "../src/templates.ts";
 import { detectStack } from "../src/detector.ts";
 import { runDoctor } from "../src/doctor.ts";
+import { updateStandards } from "../src/updater.ts";
 
 const SAMPLE_CTX = {
   projectName: "SAMURAI-ENGINE",
@@ -185,6 +186,67 @@ Deno.test("generateStandards in org mode writes organization .github bundle", as
     assert(await fs.exists(path.join(tempDir, "CODE_OF_CONDUCT.md")));
     assert(await fs.exists(path.join(tempDir, "SECURITY.md")));
     assert(await fs.exists(path.join(tempDir, ".github", "FUNDING.yml")));
+  } finally {
+    await Deno.remove(tempDir, { recursive: true });
+  }
+});
+
+Deno.test("updateStandards detects outdated files, preserves Glastor® and creates backups", async () => {
+  const tempDir = await Deno.makeTempDir({ prefix: "update_test_" });
+
+  try {
+    // 1. Create a legacy/outdated SECURITY.md and .github/CODEOWNERS
+    await Deno.writeTextFile(
+      path.join(tempDir, "SECURITY.md"),
+      "# Old Security Policy\n© 2026 Glastor® - Todos los derechos reservados.\n",
+    );
+    await fs.ensureDir(path.join(tempDir, ".github"));
+    await Deno.writeTextFile(
+      path.join(tempDir, ".github", "CODEOWNERS"),
+      "# Old Codeowners\n* @old-user\n",
+    );
+
+    // 2. Run updateStandards with backup enabled
+    const report = await updateStandards({
+      targetDir: tempDir,
+      backup: true,
+      customContext: {
+        projectName: "UPDATE-TEST",
+        repoName: "update-test",
+        orgOrUser: "glastor-dev",
+      },
+    });
+
+    // Should detect the two existing files as updated
+    assert(report.updated.some((f) => f.relativePath === "SECURITY.md"));
+    assert(report.updated.some((f) => f.relativePath === ".github/CODEOWNERS"));
+
+    // Should preserve trademarked author
+    assertEquals(report.context.authorName, "Glastor®");
+
+    // Should create .bak files
+    assert(await fs.exists(path.join(tempDir, "SECURITY.md.bak")));
+    assert(await fs.exists(path.join(tempDir, ".github", "CODEOWNERS.bak")));
+
+    // Content of updated SECURITY.md should now have GitHub 2026 standards
+    const updatedSec = await Deno.readTextFile(
+      path.join(tempDir, "SECURITY.md"),
+    );
+    assert(updatedSec.includes("Security Policy"));
+    assert(updatedSec.includes("UPDATE-TEST"));
+
+    // 3. Second run should be 100% up-to-date (idempotent)
+    const secondReport = await updateStandards({
+      targetDir: tempDir,
+      customContext: {
+        projectName: "UPDATE-TEST",
+        repoName: "update-test",
+        orgOrUser: "glastor-dev",
+      },
+    });
+
+    assert(secondReport.upToDate.some((f) => f.relativePath === "SECURITY.md"));
+    assertEquals(secondReport.updated.length, 0);
   } finally {
     await Deno.remove(tempDir, { recursive: true });
   }

@@ -1,80 +1,41 @@
-# 🚀 Guía y Estándares de Contribución
+# 🚀 Contributing Guidelines & Standards
 
-Gracias por sumarte a la misión de impulsar y escalar **SAMURAI**. Valoramos la
-excelencia técnica, el rigor arquitectónico y el compromiso con la calidad. Esta
-guía establece el marco de trabajo para optimizar la **Developer Experience
-(DX)** y garantizar la estabilidad del software.
+Thank you for contributing to **SAMURAI**. We value technical excellence,
+architectural rigor, and clean engineering practices.
 
 ---
 
-## 📌 Gestión Estratégica de Incidencias
+## 🛠️ Pull Request Workflow
 
-### Reportes de Errores (Fidelidad Técnica)
-
-Para optimizar el triaje y la resolución, exigimos reportes con máxima fidelidad
-técnica:
-
-- **Executive Summary:** Breve descripción del impacto y alcance de la
-  incidencia.
-- **Protocolo de Reproducción:** Secuencia determinística de pasos mínimos.
-- **Análisis de Desviación:** Contraste claro entre el comportamiento observado
-  vs. el esperado.
-- **Stack Tecnológico:** Versión exacta del Runtime (Deno/Node), Sistema
-  Operativo y commit hash.
-- **Evidencia Técnica:** Logs de terminal, trazas de error completas o
-  reproducciones mínimas aisladas.
-
-### Propuestas de Nuevas Funcionalidades
-
-Si deseas proponer un cambio estructural, te invitamos a abrir primero un ticket
-de discusión o issue con un breve _Design Doc_:
-
-- **Valor Agregado:** Justificación de la necesidad y retorno técnico.
-- **Casos de Uso:** Escenarios concretos donde la mejora es requerida.
-- **Compatibilidad:** Consideraciones sobre retrocompatibilidad y posibles
-  _breaking changes_.
-
----
-
-## 🛠️ Pipeline de Integración (Pull Requests)
-
-Seguimos un flujo de trabajo riguroso para mantener verde la rama principal
-(`main`):
-
-1. **Crear Rama Temática (Semantic Branching):**
+1. **Semantic Branching:**
    ```bash
-   git checkout -b feat/nueva-funcionalidad
-   # o fix/descripcion-del-bug
+   git checkout -b feat/your-feature-name
+   # or fix/issue-description
    ```
 
-2. **Garantía de Calidad Local:** Antes de abrir el PR, verifica que todos los
-   checks pasen sin advertencias:
+2. **Local Verification:** Ensure formatting, linter, and tests pass with zero
+   warnings before opening a PR:
    ```bash
-   # En entornos Deno:
-   deno fmt --check
-   deno lint
    deno test -A
    ```
 
-3. **Commits Convencionales:** Sigue estrictamente la especificación en
+3. **Conventional Commits:** Follow
    [.github/COMMIT_CONVENTION.md](COMMIT_CONVENTION.md):
    ```bash
    git commit -m "feat(core): implement deterministic schema validation"
    ```
 
-4. **Sincronización:** Envía tus cambios a tu fork y abre el PR contra la rama
-   `main`.
+4. **Open Pull Request:** Submit your branch against `master` with the completed
+   PR checklist.
 
 ---
 
-## 📐 Principios de Ingeniería y DX
+## 📐 Engineering Principles
 
-- **Clean Code & SOLID:** Modularidad atómica, funciones puras y tipado estricto
-  sin uso injustificado de `any`.
-- **Atomicidad en PRs:** Un PR debe resolver una única responsabilidad.
-- **Actualización de Documentación:** Todo cambio en la API pública debe
-  reflejarse en los ejemplos y en el README.
+- **Clean Code & SOLID:** Modular, pure functions, and strict typing without
+  unjustified `any`.
+- **Atomic Pull Requests:** One PR solves one discrete responsibility.
+- **Docs Parity:** Every API modification must include corresponding
+  documentation updates.
 
----
-
-© 2010-2026 Glastor - Todos los derechos reservados.
+© 2010-2026 Glastor® - All rights reserved.

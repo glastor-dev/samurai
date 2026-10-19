@@ -9,7 +9,7 @@ and technical sustainability ensuring continuous core evolution.
 
 ### 👥 Engineering Leadership & Direction
 
-- **Glastor** ([@glastor-dev](https://github.com/glastor-dev))
+- **Glastor®** ([@glastor-dev](https://github.com/glastor-dev))
   - _Lead Software Architect & Maintainer_
   - Responsible for strategic roadmap, architectural integrity, and technical
     governance.
@@ -39,4 +39,4 @@ is an investment in the stability of tools powering your technology stack:
   [Star this repository](https://github.com/glastor-dev/samurai) to increase
   ecosystem visibility.
 
-© 2010-2026 Glastor - All rights reserved.
+© 2010-2026 Glastor® - All rights reserved.

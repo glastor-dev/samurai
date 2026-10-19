@@ -1,77 +1,57 @@
-# 🛡️ Política de Seguridad (Security Policy)
+# 🛡️ Security Policy
 
-## Compromiso de Seguridad y Divulgación Responsable
+## Responsible Disclosure & Supply Chain Security
 
-La seguridad, integridad y resiliencia de la **Software Supply Chain** de
-**SAMURAI** es una prioridad institucional absoluta. Agradecemos el esfuerzo de
-la comunidad y de investigadores de seguridad independientes por reportar
-vulnerabilidades de manera ética y confidencial.
-
----
-
-## 🔒 Versiones con Soporte Activo
-
-Mantenemos activamente parches de seguridad para las siguientes ramas y
-versiones:
-
-| Versión                            | Estado de Soporte | Tipo de Mantenimiento                            |
-| :--------------------------------- | :---------------: | :----------------------------------------------- |
-| **Latest (main / main)**           |     ✅ Activo     | Parches inmediatos de seguridad y dependencias   |
-| **Versión mayor anterior (v-1.x)** |    🛡️ Crítico     | Parches de vulnerabilidades severas (CVSS ≥ 7.0) |
-| **Versiones heredadas (< v-1.x)**  |  ❌ Sin Soporte   | Fin del ciclo de vida (EOL). Migración requerida |
+The security, integrity, and resilience of the **SAMURAI** software supply chain
+is an absolute priority. We appreciate the efforts of the open-source community
+and independent security researchers in discovering and responsibly reporting
+vulnerabilities.
 
 ---
 
-## 🚨 Protocolo para Reportar Vulnerabilidades
+## 🔒 Supported Versions
 
-> ⚠️ **IMPORTANTE:** **NO** abras un ticket público en GitHub Issues para
-> reportar vulnerabilidades de seguridad que puedan comprometer la
-> confidencialidad, integridad o disponibilidad de sistemas en producción.
+We actively maintain security patches for the following releases and branches:
 
-### Canal Preferido: GitHub Private Vulnerability Reporting (PVR)
+| Version                    |      Status      | Maintenance Policy                                          |
+| :------------------------- | :--------------: | :---------------------------------------------------------- |
+| **Latest (main / master)** |   ✅ Supported   | Immediate security patches and automated dependency updates |
+| **Previous Major (v-1.x)** | 🛡️ Critical Only | Patches for high/critical vulnerabilities (CVSS ≥ 7.0)      |
+| **Legacy (< v-1.x)**       |  ❌ End of Life  | Unsupported. Upgrade required                               |
 
-Utiliza la herramienta nativa de GitHub para apertura segura y cifrada de
-reportes:
+---
 
-1. Dirígete a la pestaña **Security** del repositorio:
+## 🚨 Reporting a Vulnerability
+
+> ⚠️ **IMPORTANT:** **DO NOT** open public GitHub Issues or public pull requests
+> for security vulnerabilities that could compromise production systems.
+
+### Preferred Channel: GitHub Private Vulnerability Reporting (PVR)
+
+Please report vulnerabilities using GitHub's native confidential reporting tool:
+
+1. Navigate to the **Security** tab of this repository:
    [https://github.com/glastor-dev/samurai/security/advisories](https://github.com/glastor-dev/samurai/security/advisories).
-2. Haz clic en **Report a vulnerability**.
-3. Completa los detalles técnicos, vector de ataque y prueba de concepto (PoC).
+2. Click **Report a vulnerability**.
+3. Fill out the advisory form with technical details and reproducible
+   proof-of-concept (PoC).
 
-### Canal Alternativo Directo:
+### Alternative Direct Channel:
 
-Si no dispones de cuenta con acceso a Security Advisories o requieres cifrado
-PGP/GPG:
+If Private Vulnerability Reporting is unavailable:
 
-- **Email de Seguridad:**
-  [glastor.info@gmail.com](mailto:glastor.info@gmail.com)
-- **Asunto:** `[SECURITY-ALERT] samurai - CVE / Vulnerabilidad`
-
----
-
-## 📋 Requisitos para el Reporte Técnico
-
-Para acelerar el triaje y la remediación, incluye:
-
-1. **Descripción del impacto:** Severidad estimada según métricas **CVSS v3.1 /
-   v4.0**.
-2. **Pasos para reproducir:** Prueba de concepto determinista (script mínimo,
-   payload o secuencia HTTP).
-3. **Entorno afectado:** Sistema Operativo, Runtime, versiones específicas
-   afectadas.
-4. **Propuesta de remediación (opcional):** Parche o mitigación temporal si está
-   disponible.
+- **Security Contact:** [glastor.info@gmail.com](mailto:glastor.info@gmail.com)
+- **Subject:** `[SECURITY-ALERT] samurai - Vulnerability Report`
 
 ---
 
-## ⏱️ Acuerdos de Nivel de Servicio (SLA)
+## ⏱️ Service Level Agreements (SLAs)
 
-- **Acuse de recibo inicial:** Dentro de las **24 a 48 horas hábiles**.
-- **Evaluación y triaje:** Dentro de los **5 días hábiles**.
-- **Coordinación de divulgación:** Fijamos un período de gracia de **90 días**
-  para publicar el parche y notificar a los usuarios antes de cualquier
-  divulgación pública coordinada.
+- **Initial Response & Acknowledgment:** Within **24 to 48 business hours**.
+- **Triage & CVSS Assessment:** Within **5 business days**.
+- **Coordinated Disclosure:** We adhere to a **90-day grace period** to allow
+  patch deployment before public CVE disclosure.
 
 ---
 
-© 2026 Glastor - Todos los derechos reservados.
+© 2010-2026 Glastor® - All rights reserved.

@@ -104,7 +104,35 @@ export async function resolveContext(
 
   const orgOrUser = overrides.orgOrUser || detected.orgOrUser || "glastor-dev";
   const repoName = overrides.repoName || detected.repoName || dirBasename;
-  const authorName = overrides.authorName || detected.authorName ||
+
+  // Detect if any existing governance file preserves a trademark or specific author name (e.g. Glastor®)
+  let preservedAuthor: string | undefined;
+  for (
+    const testRel of [
+      "SECURITY.md",
+      "CONTRIBUTORS.md",
+      "CITATION.md",
+      ".github/CODE_OF_CONDUCT.md",
+      ".github/SECURITY.md",
+      ".github/SUPPORT.md",
+    ]
+  ) {
+    try {
+      const p = path.join(targetDir, testRel);
+      if (await fs.exists(p)) {
+        const text = await Deno.readTextFile(p);
+        if (text.includes("Glastor®")) {
+          preservedAuthor = "Glastor®";
+          break;
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const authorName = overrides.authorName || preservedAuthor ||
+    detected.authorName ||
     "Andrés Antonio Cardoso";
   const authorEmail = overrides.authorEmail || detected.authorEmail ||
     "glastor.info@gmail.com";

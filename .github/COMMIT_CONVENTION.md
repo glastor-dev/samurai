@@ -1,70 +1,51 @@
-# 📐 Arquitectura de Mensajes de Commit (Conventional Commits)
+# 📐 Commit Message Architecture (Conventional Commits)
 
-Para escalar el desarrollo y garantizar una **Software Supply Chain**
-transparente y auditable, este repositorio implementa una convención estricta
-basada en el estándar
-[Conventional Commits v1.0.0](https://www.conventionalcommits.org/). Esta
-práctica impulsa de forma determinista la generación automatizada de changelogs,
-el cálculo de **Semantic Versioning (SemVer)** y la trazabilidad de auditorías
-DevSecOps.
+To scale development and maintain a transparent software supply chain, this
+repository enforces the
+[Conventional Commits v1.0.0](https://www.conventionalcommits.org/)
+specification. This practice deterministically drives automated changelogs,
+Semantic Versioning (SemVer), and DevSecOps traceability.
 
 ---
 
-## 🔍 Especificación Técnica y Expresión Regular de Validación
+## 🔍 Validation Specification
 
-Todo aporte y commit debe superar el esquema de validación definido por la
-siguiente expresión regular antes de integrarse en la rama `main`:
+Every commit must pass the following regular expression before integration into
+`master`:
 
 ```js
 /^(revert: )?(feat|fix|polish|docs|style|refactor|perf|test|workflow|ci|chore|types)(\([\w.-]+\))?: .{1,50}$/;
 ```
 
-### Parámetros de Calidad:
-
-- **Scope (Opcional):** Contexto modular del cambio entre paréntesis (ej.
-  `core`, `cli`, `api`, `deps`).
-- **Encabezado (Subject):** Máximo 50 caracteres, modo imperativo, sin punto
-  final.
-- **DX-First:** Un historial de commits limpio facilita el análisis con
-  `git bisect` y la ejecución de `cherry-pick`.
-
----
-
-## 🏗️ Estructura del Mensaje
+### Commit Structure:
 
 ```text
-<tipo>(<scope>): <asunto breve>
+<type>(<scope>): <short description>
 
-<cuerpo detallado explicando la motivación técnica y el impacto>
+<detailed body explaining technical motivation and impact>
 
 <footer>
 ```
 
-### Catálogo de Tipos y Comportamiento en Release:
+| Type              | SemVer Impact / Description                     | Included in Changelog? |
+| :---------------- | :---------------------------------------------- | :--------------------: |
+| `feat`            | New user-facing feature or capability.          |    **Yes (Minor)**     |
+| `fix`             | Bug fix or regression patch.                    |    **Yes (Patch)**     |
+| `perf`            | Performance optimization or resource reduction. |        **Yes**         |
+| `refactor`        | Code restructuring without behavioral change.   |           No           |
+| `docs`            | Technical documentation updates.                |           No           |
+| `test`            | Unit or integration test additions.             |           No           |
+| `ci` / `workflow` | CI/CD pipeline and automation changes.          |           No           |
+| `chore`           | Tooling, dependencies, or metadata maintenance. |           No           |
 
-| Tipo              | Impacto DX / Descripción                                | ¿Aparece en Changelog? |
-| :---------------- | :------------------------------------------------------ | :--------------------: |
-| `feat`            | Nueva funcionalidad expuesta al usuario.                |     **Sí (Minor)**     |
-| `fix`             | Resolución de un bug o regresión.                       |     **Sí (Patch)**     |
-| `perf`            | Optimización de rendimiento o consumo de memoria.       |         **Sí**         |
-| `refactor`        | Reestructuración de código sin alterar comportamiento.  |           No           |
-| `docs`            | Actualización de documentación técnica o diagramas.     |           No           |
-| `test`            | Añadido o corrección de pruebas automatizadas.          |           No           |
-| `ci` / `workflow` | Modificaciones en pipelines de CI/CD de GitHub Actions. |           No           |
-| `chore`           | Mantenimiento de herramientas, scripts o metadatos.     |           No           |
-| `types`           | Refinamiento de interfaces y definiciones TypeScript.   |           No           |
-| `polish`          | Ajustes cosméticos o mejoras menores de UX.             |           No           |
-
-> 💥 **Breaking Changes:** Cualquier commit que incluya `BREAKING CHANGE:` al
-> inicio del footer forzará automáticamente una subida de versión mayor (**Major
-> Release**), sin importar el tipo.
+> 💥 **Breaking Changes:** Any commit containing `BREAKING CHANGE:` in the
+> footer automatically triggers a **Major Release**.
 
 ---
 
-## 🔐 Firma Criptográfica de Commits (Verified Badge)
+## 🔐 Cryptographic Commit Signing (Verified Badge)
 
-Conforme a las directrices de seguridad de la cadena de suministro de GitHub, se
-recomienda firmar digitalmente cada commit utilizando llaves **SSH** o **GPG**
-para garantizar la autenticidad e integridad del autor.
+In accordance with GitHub supply-chain security guidelines, all commits should
+be cryptographically signed using **SSH** or **GPG** keys.
 
-© 2010-2026 Glastor - Todos los derechos reservados.
+© 2010-2026 Glastor® - All rights reserved.

@@ -1,39 +1,32 @@
-## 🤝 Soporte, Mantenimiento y Ecosistema
+## 🤝 Support & Ecosystem Guidelines
 
-Para garantizar la escalabilidad de **SAMURAI** y una **Developer Experience
-(DX)** de primer nivel, hemos establecido protocolos de asistencia diseñados
-para optimizar el triaje y la resolución de consultas técnicas.
+To ensure the scalability of **SAMURAI** and maintain world-class Developer
+Experience (DX), please use our official support channels:
 
 ---
 
-### 💬 Centro de Conocimiento y Discusión Comunitaria
+### 💬 Community & Architectural Discussions
 
-Utiliza este espacio para consultas de arquitectura, preguntas frecuentes y
-retroalimentación sobre la visión del proyecto:
+For usage questions, roadmap discussions, and technical brainstorming:
 
 - **[GitHub Discussions](https://github.com/glastor-dev/samurai/discussions):**
-  Ideal para debates técnicos, ideas conceptuales y soporte de la comunidad.
+  Ideal for open technical dialogue.
 
-### 🐛 Triaje de Incidencias y Sugerencias Formales
+### 🐛 Issue Triage & Bug Reports
 
-Nuestro sistema de issue tracking sigue especificaciones de alta fidelidad:
+For reproducible defects or formal capability requests:
 
-- **[Abrir un Ticket en GitHub Issues](https://github.com/glastor-dev/samurai/issues):**
-  Reportes reproducibles de errores y solicitudes de nuevas capacidades.
-- **Nota:** Agradecemos incluir logs de terminal, versiones del entorno y
-  reproducciones mínimas.
+- **[Open a GitHub Issue](https://github.com/glastor-dev/samurai/issues):**
+  Please provide environment details, minimal reproduction scripts, and logs.
 
-### 🛡️ Protocolo de Seguridad y Divulgación Privada
+### 🛡️ Private Security Disclosure
 
-La seguridad de nuestro código es una prioridad absoluta. Ante el hallazgo de
-vulnerabilidades críticas:
+Do not report critical vulnerabilities in public tickets:
 
-1. Revisa nuestra
-   **[Política de Seguridad](https://github.com/glastor-dev/samurai/security/policy)**.
-2. Abre un reporte privado en
+1. Consult our
+   **[Security Policy](https://github.com/glastor-dev/samurai/security/policy)**.
+2. Submit a confidential report via
    **[Security Advisories](https://github.com/glastor-dev/samurai/security/advisories)**
-   o contacta a: [glastor.info@gmail.com](mailto:glastor.info@gmail.com).
+   or email [glastor.info@gmail.com](mailto:glastor.info@gmail.com).
 
----
-
-© 2010-2026 Glastor - Todos los derechos reservados.
+© 2010-2026 Glastor® - All rights reserved.
