@@ -7,6 +7,19 @@
     ".": "./src/mod.ts",
     "./cli": "./src/cli.ts"
   },
+  "publish": {
+    "include": [
+      "src/",
+      "deno.json",
+      "README.md",
+      "LICENSE"
+    ],
+    "exclude": [
+      "tests/",
+      ".github/",
+      "dist/"
+    ]
+  },
   "tasks": {
     "start": "deno run -A src/cli.ts",
     "init": "deno run -A src/cli.ts init",

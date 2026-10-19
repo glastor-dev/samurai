@@ -125,7 +125,9 @@ export async function runWizard(targetDir: string = "."): Promise<void> {
     `   • Archivos generados: ${colors.green(String(result.written.length))}`,
   );
   console.log(
-    `   • Stack configurado:  ${colors.cyan(result.context.stackDisplayName)}`,
+    `   • Stack configurado:  ${
+      colors.cyan(result.context.stackDisplayName || "Universal")
+    }`,
   );
   console.log(
     `   • Idioma de docs:     ${
