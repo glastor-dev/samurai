@@ -42,15 +42,15 @@ jobs:
         run: |
           deno fmt --check
           deno lint
-          deno check src/mod.ts src/cli.ts
+          deno check src/mod.ts src/cli.ts src/server.ts
           deno test -A
 
       - name: Publish to JSR
         run: |
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             echo "Running simulated JSR publication..."
-            deno publish --dry-run --allow-slow-types
+            npx jsr publish --dry-run --allow-slow-types
           else
             echo "Publishing @glastor-dev/samurai with OIDC..."
-            deno publish --allow-slow-types
+            npx jsr publish --allow-slow-types
           fi
